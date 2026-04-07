@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>बोला! (Bola!) — Learn Marathi</title>
+    <meta name="description" content="Learn Marathi language from absolute beginner to intermediate level. Interactive lessons, gamified quizzes, flashcards, and cultural notes rooted in Maharashtra.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ===== SPLASH SCREEN ===== -->
+    <div id="splash-screen" class="screen active">
+        <div class="splash-bg-pattern"></div>
+        <div class="splash-content">
+            <div class="splash-logo-container">
+                <div class="splash-logo-glow"></div>
+                <h1 class="splash-title">बोला!</h1>
+                <p class="splash-subtitle">Learn Marathi</p>
+            </div>
+            <div class="splash-warli-art">
+                <svg viewBox="0 0 400 120" class="warli-svg">
+                    <!-- Warli-style dancing figures -->
+                    <g class="warli-dancers" fill="none" stroke="rgba(255,165,80,0.6)" stroke-width="1.5">
+                        <!-- Figure 1 -->
+                        <circle cx="50" cy="25" r="8"/>
+                        <line x1="50" y1="33" x2="50" y2="65"/>
+                        <line x1="50" y1="45" x2="35" y2="55"/>
+                        <line x1="50" y1="45" x2="65" y2="40"/>
+                        <line x1="50" y1="65" x2="38" y2="85"/>
+                        <line x1="50" y1="65" x2="62" y2="85"/>
+                        <!-- Figure 2 -->
+                        <circle cx="120" cy="20" r="8"/>
+                        <line x1="120" y1="28" x2="120" y2="60"/>
+                        <line x1="120" y1="40" x2="105" y2="35"/>
+                        <line x1="120" y1="40" x2="135" y2="50"/>
+                        <line x1="120" y1="60" x2="108" y2="80"/>
+                        <line x1="120" y1="60" x2="132" y2="80"/>
+                        <!-- Figure 3 -->
+                        <circle cx="190" cy="28" r="8"/>
+                        <line x1="190" y1="36" x2="190" y2="68"/>
+                        <line x1="190" y1="48" x2="175" y2="58"/>
+                        <line x1="190" y1="48" x2="205" y2="43"/>
+                        <line x1="190" y1="68" x2="178" y2="88"/>
+                        <line x1="190" y1="68" x2="202" y2="88"/>
+                        <!-- Figure 4 -->
+                        <circle cx="260" cy="22" r="8"/>
+                        <line x1="260" y1="30" x2="260" y2="62"/>
+                        <line x1="260" y1="42" x2="245" y2="37"/>
+                        <line x1="260" y1="42" x2="275" y2="52"/>
+                        <line x1="260" y1="62" x2="248" y2="82"/>
+                        <line x1="260" y1="62" x2="272" y2="82"/>
+                        <!-- Figure 5 -->
+                        <circle cx="330" cy="26" r="8"/>
+                        <line x1="330" y1="34" x2="330" y2="66"/>
+                        <line x1="330" y1="46" x2="315" y2="56"/>
+                        <line x1="330" y1="46" x2="345" y2="41"/>
+                        <line x1="330" y1="66" x2="318" y2="86"/>
+                        <line x1="330" y1="66" x2="342" y2="86"/>
+                        <!-- Decorative triangles -->
+                        <polygon points="80,90 95,70 110,90"/>
+                        <polygon points="150,85 165,65 180,85"/>
+                        <polygon points="220,92 235,72 250,92"/>
+                        <polygon points="290,88 305,68 320,88"/>
+                    </g>
+                </svg>
+            </div>
+            <p class="splash-tagline">Your journey into the beautiful language of Maharashtra starts here</p>
+            <button id="btn-get-started" class="btn-primary btn-large pulse-animation" onclick="showScreen('onboarding')">
+                <span>Get Started</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <p class="splash-login-link" onclick="showScreen('dashboard')">Already learning? <span>Continue →</span></p>
+        </div>
+    </div>
+
+    <!-- ===== ONBOARDING SCREEN ===== -->
+    <div id="onboarding-screen" class="screen">
+        <div class="onboarding-container">
+            <div class="onboarding-progress">
+                <div class="onboarding-dots">
+                    <span class="dot active" data-step="0"></span>
+                    <span class="dot" data-step="1"></span>
+                    <span class="dot" data-step="2"></span>
+                </div>
+            </div>
+            <div class="onboarding-slides" id="onboarding-slides">
+                <div class="onboarding-slide active" data-slide="0">
+                    <div class="slide-icon">📚</div>
+                    <h2>Bite-Sized Lessons</h2>
+                    <p>Learn Marathi in just 5–10 minutes a day with interactive lessons designed for absolute beginners.</p>
+                </div>
+                <div class="onboarding-slide" data-slide="1">
+                    <div class="slide-icon">🎮</div>
+                    <h2>Gamified Learning</h2>
+                    <p>Earn XP, maintain streaks, unlock badges, and climb the leaderboard as you master Marathi!</p>
+                </div>
+                <div class="onboarding-slide" data-slide="2">
+                    <div class="slide-icon">🏮</div>
+                    <h2>Cultural Immersion</h2>
+                    <p>Discover Maharashtra's festivals, food, art, and traditions while learning the language.</p>
+                </div>
+            </div>
+            <div class="onboarding-actions">
+                <button class="btn-secondary" id="btn-skip-onboarding" onclick="showScreen('dashboard')">Skip</button>
+                <button class="btn-primary" id="btn-next-onboarding" onclick="nextOnboardingSlide()">
+                    <span>Next</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DASHBOARD SCREEN ===== -->
+    <div id="dashboard-screen" class="screen">
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="header-logo">बोला!</h1>
+            </div>
+            <div class="header-right">
+                <div class="header-stat" id="streak-display">
+                    <span class="stat-icon">🔥</span>
+                    <span class="stat-value" id="streak-count">0</span>
+                </div>
+                <div class="header-stat" id="xp-display">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="xp-count">0</span>
+                </div>
+                <div class="header-stat" id="hearts-display">
+                    <span class="stat-icon">❤️</span>
+                    <span class="stat-value" id="hearts-count">5</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <!-- Continue Learning Card -->
+            <div class="continue-card" id="continue-card">
+                <div class="continue-info">
+                    <p class="continue-label">Continue Learning</p>
+                    <h3 class="continue-title" id="continue-lesson-title">Lesson 1: स्वर (Vowels)</h3>
+                    <div class="continue-progress-bar">
+                        <div class="continue-progress-fill" id="continue-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <button class="btn-continue" onclick="startCurrentLesson()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+            </div>
+
+            <!-- Daily Goal -->
+            <div class="daily-goal-card">
+                <div class="daily-goal-header">
+                    <h3>Daily Goal</h3>
+                    <span class="daily-goal-badge" id="daily-goal-status">0/20 XP</span>
+                </div>
+                <div class="daily-goal-bar">
+                    <div class="daily-goal-fill" id="daily-goal-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Level Map -->
+            <div class="level-section">
+                <div class="level-header">
+                    <h2 class="level-title">Level 1: मूलभूत (Basics)</h2>
+                    <div class="level-badge">BEGINNER</div>
+                </div>
+                <div class="lesson-grid" id="lesson-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Cultural Note of the Day -->
+            <div class="cultural-card" onclick="showScreen('cultural-notes')">
+                <div class="cultural-card-icon">🏮</div>
+                <div class="cultural-card-content">
+                    <h3>Cultural Note</h3>
+                    <p id="daily-cultural-note">Marathi is the 3rd most spoken language in India with over 83 million speakers!</p>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-screen="dashboard" onclick="switchTab(this, 'dashboard')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-screen="lessons-list" onclick="switchTab(this, 'lessons-list')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg>
+                <span>Lessons</span>
+            </button>
+            <button class="nav-item" data-screen="flashcards" onclick="switchTab(this, 'flashcards')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2V7h-4v2h2z"/></svg>
+                <span>Cards</span>
+            </button>
+            <button class="nav-item" data-screen="profile" onclick="switchTab(this, 'profile')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <span>Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ===== LESSONS LIST SCREEN ===== -->
+    <div id="lessons-list-screen" class="screen">
+        <header class="app-header">
+            <button class="btn-back" onclick="showScreen('dashboard')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h1 class="header-title">All Lessons</h1>
+            <div style="width:40px"></div>
+        </header>
+        <main class="lessons-list-main" id="lessons-list-content">
+            <!-- Populated by JS -->
+        </main>
+        <nav class="bottom-nav">
+            <button class="nav-item" data-screen="dashboard" onclick="switchTab(this, 'dashboard')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-item active" data-screen="lessons-list" onclick="switchTab(this, 'lessons-list')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg>
+                <span>Lessons</span>
+            </button>
+            <button class="nav-item" data-screen="flashcards" onclick="switchTab(this, 'flashcards')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2V7h-4v2h2z"/></svg>
+                <span>Cards</span>
+            </button>
+            <button class="nav-item" data-screen="profile" onclick="switchTab(this, 'profile')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <span>Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ===== LESSON SCREEN ===== -->
+    <div id="lesson-screen" class="screen">
+        <header class="lesson-header">
+            <button class="btn-close-lesson" onclick="exitLesson()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            <div class="lesson-progress-container">
+                <div class="lesson-progress-bar">
+                    <div class="lesson-progress-fill" id="lesson-progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="lesson-hearts" id="lesson-hearts">
+                ❤️❤️❤️❤️❤️
+            </div>
+        </header>
+        <main class="lesson-main" id="lesson-content">
+            <!-- Populated dynamically -->
+        </main>
+    </div>
+
+    <!-- ===== FLASHCARDS SCREEN ===== -->
+    <div id="flashcards-screen" class="screen">
+        <header class="app-header">
+            <button class="btn-back" onclick="showScreen('dashboard')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h1 class="header-title">Flashcards</h1>
+            <div style="width:40px"></div>
+        </header>
+        <main class="flashcards-main">
+            <div class="flashcard-deck-info">
+                <span id="flashcard-counter">Card 1 of 10</span>
+            </div>
+            <div class="flashcard-container" id="flashcard-container">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-front" id="flashcard-front">
+                        <p class="flashcard-marathi" id="flashcard-word">आई</p>
+                        <button class="btn-audio flashcard-audio" onclick="event.stopPropagation(); speakWord(document.getElementById('flashcard-word').textContent)">
+                            🔊
+                        </button>
+                        <p class="flashcard-hint">Tap to reveal</p>
+                    </div>
+                    <div class="flashcard-back" id="flashcard-back">
+                        <p class="flashcard-english" id="flashcard-meaning">Mother</p>
+                        <p class="flashcard-pronunciation" id="flashcard-pron">aai</p>
+                        <p class="flashcard-example" id="flashcard-example">माझी आई सुंदर आहे</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard-actions">
+                <button class="btn-flashcard-hard" onclick="rateFlashcard('hard')">
+                    <span>😓</span>
+                    <span>Hard</span>
+                </button>
+                <button class="btn-flashcard-ok" onclick="rateFlashcard('ok')">
+                    <span>🤔</span>
+                    <span>Okay</span>
+                </button>
+                <button class="btn-flashcard-easy" onclick="rateFlashcard('easy')">
+                    <span>😊</span>
+                    <span>Easy</span>
+                </button>
+            </div>
+        </main>
+        <nav class="bottom-nav">
+            <button class="nav-item" data-screen="dashboard" onclick="switchTab(this, 'dashboard')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-screen="lessons-list" onclick="switchTab(this, 'lessons-list')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg>
+                <span>Lessons</span>
+            </button>
+            <button class="nav-item active" data-screen="flashcards" onclick="switchTab(this, 'flashcards')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2V7h-4v2h2z"/></svg>
+                <span>Cards</span>
+            </button>
+            <button class="nav-item" data-screen="profile" onclick="switchTab(this, 'profile')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <span>Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ===== PROFILE SCREEN ===== -->
+    <div id="profile-screen" class="screen">
+        <header class="app-header">
+            <button class="btn-back" onclick="showScreen('dashboard')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h1 class="header-title">Profile</h1>
+            <div style="width:40px"></div>
+        </header>
+        <main class="profile-main">
+            <div class="profile-avatar-section">
+                <div class="profile-avatar">
+                    <span>🦚</span>
+                </div>
+                <h2 class="profile-name">Learner</h2>
+                <p class="profile-level-label">Level 1 • Beginner</p>
+            </div>
+
+            <div class="profile-stats-grid">
+                <div class="profile-stat-card">
+                    <span class="profile-stat-icon">🔥</span>
+                    <span class="profile-stat-value" id="profile-streak">0</span>
+                    <span class="profile-stat-label">Day Streak</span>
+                </div>
+                <div class="profile-stat-card">
+                    <span class="profile-stat-icon">⭐</span>
+                    <span class="profile-stat-value" id="profile-xp">0</span>
+                    <span class="profile-stat-label">Total XP</span>
+                </div>
+                <div class="profile-stat-card">
+                    <span class="profile-stat-icon">📝</span>
+                    <span class="profile-stat-value" id="profile-words">0</span>
+                    <span class="profile-stat-label">Words</span>
+                </div>
+                <div class="profile-stat-card">
+                    <span class="profile-stat-icon">📖</span>
+                    <span class="profile-stat-value" id="profile-lessons">0</span>
+                    <span class="profile-stat-label">Lessons</span>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3>Badges</h3>
+                <div class="badges-grid" id="badges-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3>Weekly Activity</h3>
+                <div class="weekly-chart" id="weekly-chart">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </main>
+        <nav class="bottom-nav">
+            <button class="nav-item" data-screen="dashboard" onclick="switchTab(this, 'dashboard')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-screen="lessons-list" onclick="switchTab(this, 'lessons-list')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg>
+                <span>Lessons</span>
+            </button>
+            <button class="nav-item" data-screen="flashcards" onclick="switchTab(this, 'flashcards')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2V7h-4v2h2z"/></svg>
+                <span>Cards</span>
+            </button>
+            <button class="nav-item active" data-screen="profile" onclick="switchTab(this, 'profile')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <span>Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ===== CULTURAL NOTES SCREEN ===== -->
+    <div id="cultural-notes-screen" class="screen">
+        <header class="app-header">
+            <button class="btn-back" onclick="showScreen('dashboard')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h1 class="header-title">Cultural Notes</h1>
+            <div style="width:40px"></div>
+        </header>
+        <main class="cultural-notes-main" id="cultural-notes-content">
+            <!-- Populated by JS -->
+        </main>
+    </div>
+
+    <!-- ===== LESSON COMPLETE MODAL ===== -->
+    <div id="lesson-complete-modal" class="modal">
+        <div class="modal-backdrop" onclick="closeLessonComplete()"></div>
+        <div class="modal-content lesson-complete-content">
+            <div class="confetti-container" id="confetti-container"></div>
+            <div class="lesson-complete-icon">🎉</div>
+            <h2>Lesson Complete!</h2>
+            <div class="lesson-complete-stats">
+                <div class="complete-stat">
+                    <span class="complete-stat-value" id="complete-xp">+25</span>
+                    <span class="complete-stat-label">XP Earned</span>
+                </div>
+                <div class="complete-stat">
+                    <span class="complete-stat-value" id="complete-accuracy">100%</span>
+                    <span class="complete-stat-label">Accuracy</span>
+                </div>
+                <div class="complete-stat">
+                    <span class="complete-stat-value" id="complete-words">0</span>
+                    <span class="complete-stat-label">New Words</span>
+                </div>
+            </div>
+            <button class="btn-primary btn-large" onclick="closeLessonComplete()">Continue</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
