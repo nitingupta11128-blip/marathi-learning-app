@@ -654,6 +654,81 @@ body {
     transition: width 0.5s ease;
 }
 
+/* Level Tabs */
+.level-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    animation: slideUp 0.65s ease;
+    padding: 2px;
+}
+
+.level-tabs::-webkit-scrollbar { display: none; }
+
+.level-tab {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 6px;
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--glass-border);
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: var(--font-sans);
+    position: relative;
+    overflow: hidden;
+}
+
+.level-tab .level-tab-icon { font-size: 1.3rem; }
+.level-tab .level-tab-name {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.level-tab.active {
+    border-color: var(--saffron);
+    background: rgba(255,107,53,0.1);
+    box-shadow: 0 0 16px rgba(255,107,53,0.15);
+}
+.level-tab.active .level-tab-name { color: var(--saffron); }
+
+.level-tab.completed {
+    border-color: rgba(52,211,153,0.3);
+    background: rgba(52,211,153,0.08);
+}
+.level-tab.completed .level-tab-name { color: var(--success); }
+.level-tab.completed::after {
+    content: '✓';
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    font-size: 0.55rem;
+    color: var(--success);
+    font-weight: 900;
+}
+
+.level-tab.locked {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.level-tab.locked:hover { transform: none; }
+
+.level-tab:not(.locked):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
 /* Level Section */
 .level-section {
     margin-bottom: 24px;

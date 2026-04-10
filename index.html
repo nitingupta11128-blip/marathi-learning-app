@@ -161,11 +161,31 @@
                 </div>
             </div>
 
+            <!-- Level Tabs -->
+            <div class="level-tabs" id="level-tabs">
+                <button class="level-tab active" data-level="0" onclick="switchLevel(0)">
+                    <span class="level-tab-icon">🏮</span>
+                    <span class="level-tab-name">Basics</span>
+                </button>
+                <button class="level-tab" data-level="1" onclick="switchLevel(1)">
+                    <span class="level-tab-icon">📘</span>
+                    <span class="level-tab-name">Foundation</span>
+                </button>
+                <button class="level-tab" data-level="2" onclick="switchLevel(2)">
+                    <span class="level-tab-icon">💬</span>
+                    <span class="level-tab-name">Conversation</span>
+                </button>
+                <button class="level-tab" data-level="3" onclick="switchLevel(3)">
+                    <span class="level-tab-icon">🎓</span>
+                    <span class="level-tab-name">Advanced</span>
+                </button>
+            </div>
+
             <!-- Level Map -->
             <div class="level-section">
                 <div class="level-header">
-                    <h2 class="level-title">Level 1: मूलभूत (Basics)</h2>
-                    <div class="level-badge">BEGINNER</div>
+                    <h2 class="level-title" id="level-title">Level 1: मूलभूत (Basics)</h2>
+                    <div class="level-badge" id="level-badge">BEGINNER</div>
                 </div>
                 <div class="lesson-grid" id="lesson-grid">
                     <!-- Populated by JS -->
@@ -335,7 +355,7 @@
                     <span>🦚</span>
                 </div>
                 <h2 class="profile-name">Learner</h2>
-                <p class="profile-level-label">Level 1 • Beginner</p>
+                <p class="profile-level-label" id="profile-level-label">Level 1 • Beginner</p>
             </div>
 
             <div class="profile-stats-grid">
@@ -434,6 +454,8 @@
         </div>
     </div>
 
+    <script src="levels-data.js"></script>
+    <script src="levels-L3-L4.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

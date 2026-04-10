@@ -6,6 +6,7 @@
 // ===== APP STATE =====
 const AppState = {
     currentScreen: 'splash',
+    currentLevel: 0,
     currentLesson: 0,
     currentStep: 0,
     xp: 0,
@@ -21,6 +22,7 @@ const AppState = {
     onboardingStep: 0,
     matchState: { selected: null, matched: [] },
     weeklyActivity: [15, 25, 10, 20, 0, 0, 0], // sample data
+    levelProgress: [0, 0, 0, 0], // lesson progress per level
 };
 
 // ===== CURRICULUM DATA =====
@@ -1713,13 +1715,39 @@ function nextOnboardingSlide() {
 }
 
 // ===== DASHBOARD =====
+// Helper: get the lessons array for current level
+function getCurrentLessons() {
+    return getLessonsForLevel(AppState.currentLevel);
+}
+
+// Helper: get the current lesson within the current level
+function getCurrentLessonProgress() {
+    const key = `level_${AppState.currentLevel}_lesson`;
+    return AppState.levelProgress[AppState.currentLevel] || 0;
+}
+
+function setCurrentLessonProgress(val) {
+    AppState.levelProgress[AppState.currentLevel] = val;
+}
+
 function updateDashboard() {
     document.getElementById('streak-count').textContent = AppState.streak;
     document.getElementById('xp-count').textContent = AppState.xp;
     document.getElementById('hearts-count').textContent = AppState.hearts;
 
+    // Update level tabs
+    updateLevelTabs();
+
+    // Level header
+    const level = LEVELS[AppState.currentLevel];
+    document.getElementById('level-title').textContent =
+        `Level ${level.id + 1}: ${level.title_mr} (${level.title_en})`;
+    document.getElementById('level-badge').textContent = level.badge;
+
     // Continue card
-    const lesson = LESSONS[AppState.currentLesson];
+    const lessons = getCurrentLessons();
+    const progress = getCurrentLessonProgress();
+    const lesson = lessons[progress];
     if (lesson) {
         document.getElementById('continue-lesson-title').textContent =
             `Lesson ${lesson.id + 1}: ${lesson.title_mr} (${lesson.title_en})`;
@@ -1734,21 +1762,61 @@ function updateDashboard() {
     renderLessonGrid();
 }
 
+function updateLevelTabs() {
+    const tabs = document.querySelectorAll('.level-tab');
+    tabs.forEach((tab, i) => {
+        tab.classList.remove('active', 'completed', 'locked');
+        if (isLevelComplete(i)) {
+            tab.classList.add('completed');
+        } else if (i === AppState.currentLevel) {
+            tab.classList.add('active');
+        } else {
+            // Available but not current
+        }
+    });
+}
+
+function isLevelComplete(levelId) {
+    const lessons = getLessonsForLevel(levelId);
+    const progress = AppState.levelProgress[levelId] || 0;
+    return progress >= lessons.length;
+}
+
+function isLevelUnlocked(levelId) {
+    return true; // All levels accessible
+}
+
+function switchLevel(levelId) {
+    if (!isLevelUnlocked(levelId)) {
+        // Shake the tab
+        const tab = document.querySelector(`.level-tab[data-level="${levelId}"]`);
+        if (tab) {
+            tab.style.animation = 'shake 0.4s ease';
+            setTimeout(() => tab.style.animation = '', 400);
+        }
+        return;
+    }
+    AppState.currentLevel = levelId;
+    updateDashboard();
+}
+
 function renderLessonGrid() {
     const grid = document.getElementById('lesson-grid');
     grid.innerHTML = '';
+    const lessons = getCurrentLessons();
+    const progress = getCurrentLessonProgress();
 
-    LESSONS.forEach((lesson, i) => {
+    lessons.forEach((lesson, i) => {
         const node = document.createElement('div');
         node.className = 'lesson-node';
 
-        if (i < AppState.currentLesson) {
+        if (i < progress) {
             node.classList.add('completed');
             node.innerHTML = `
                 <span class="lesson-node-icon">✅</span>
                 <span class="lesson-node-label">${lesson.title_mr}</span>
             `;
-        } else if (i === AppState.currentLesson) {
+        } else if (i === progress) {
             node.classList.add('current');
             node.innerHTML = `
                 <span class="lesson-node-icon">${lesson.icon}</span>
@@ -1763,14 +1831,12 @@ function renderLessonGrid() {
         }
 
         node.onclick = () => {
-            if (i <= AppState.currentLesson && lesson.steps.length > 0) {
-                const prevLesson = AppState.currentLesson;
+            if (i <= progress && lesson.steps.length > 0) {
                 AppState.currentLesson = i;
-                startCurrentLesson();
-                // Restore currentLesson if replaying an old one
-                if (i < prevLesson) {
-                    AppState._replayingLesson = prevLesson;
+                if (i < progress) {
+                    AppState._replayingLesson = progress;
                 }
+                startCurrentLesson();
             } else if (node.classList.contains('locked')) {
                 node.style.animation = 'shake 0.4s ease';
                 setTimeout(() => node.style.animation = '', 400);
@@ -1785,34 +1851,51 @@ function renderLessonGrid() {
 // ===== LESSONS LIST =====
 function renderLessonsList() {
     const content = document.getElementById('lessons-list-content');
-    content.innerHTML = `
-        <div class="lesson-list-level">
-            <div class="lesson-list-level-header">
-                <span>🏮</span> Level 1: मूलभूत (Basics)
-            </div>
-            ${LESSONS.map((lesson, i) => {
-                let statusClass = 'locked';
-                let statusIcon = '🔒';
-                if (i < AppState.currentLesson) {
-                    statusClass = 'completed';
-                    statusIcon = '✅';
-                } else if (i === AppState.currentLesson) {
-                    statusClass = 'current';
-                    statusIcon = '▶️';
-                }
-                return `
-                    <div class="lesson-list-item ${statusClass}" onclick="${i <= AppState.currentLesson && lesson.steps.length > 0 ? `startLessonById(${i})` : ''}">
-                        <div class="lesson-list-num">${i + 1}</div>
-                        <div class="lesson-list-info">
-                            <div class="lesson-list-title">${lesson.title_mr} (${lesson.title_en})</div>
-                            <div class="lesson-list-desc">${lesson.desc} • ${lesson.xp} XP</div>
+    let html = '';
+    LEVELS.forEach((level, lvl) => {
+        const lessons = getLessonsForLevel(lvl);
+        const progress = AppState.levelProgress[lvl] || 0;
+        const unlocked = isLevelUnlocked(lvl);
+        html += `
+            <div class="lesson-list-level">
+                <div class="lesson-list-level-header">
+                    <span>${level.icon}</span> Level ${lvl + 1}: ${level.title_mr} (${level.title_en})
+                    ${!unlocked ? ' 🔒' : ''}
+                </div>
+                ${lessons.map((lesson, i) => {
+                    let statusClass = 'locked';
+                    let statusIcon = '🔒';
+                    if (!unlocked) {
+                        statusClass = 'locked';
+                    } else if (i < progress) {
+                        statusClass = 'completed';
+                        statusIcon = '✅';
+                    } else if (i === progress) {
+                        statusClass = 'current';
+                        statusIcon = '▶️';
+                    }
+                    const canClick = unlocked && i <= progress && lesson.steps.length > 0;
+                    return `
+                        <div class="lesson-list-item ${statusClass}" onclick="${canClick ? `startLessonFromList(${lvl}, ${i})` : ''}">
+                            <div class="lesson-list-num">${i + 1}</div>
+                            <div class="lesson-list-info">
+                                <div class="lesson-list-title">${lesson.title_mr} (${lesson.title_en})</div>
+                                <div class="lesson-list-desc">${lesson.desc} • ${lesson.xp} XP</div>
+                            </div>
+                            <div class="lesson-list-icon">${statusIcon}</div>
                         </div>
-                        <div class="lesson-list-icon">${statusIcon}</div>
-                    </div>
-                `;
-            }).join('')}
-        </div>
-    `;
+                    `;
+                }).join('')}
+            </div>
+        `;
+    });
+    content.innerHTML = html;
+}
+
+function startLessonFromList(levelId, lessonId) {
+    AppState.currentLevel = levelId;
+    AppState.currentLesson = lessonId;
+    startCurrentLesson();
 }
 
 function startLessonById(id) {
@@ -1822,7 +1905,8 @@ function startLessonById(id) {
 
 // ===== LESSON ENGINE =====
 function startCurrentLesson() {
-    const lesson = LESSONS[AppState.currentLesson];
+    const lessons = getCurrentLessons();
+    const lesson = lessons[AppState.currentLesson];
     if (!lesson || lesson.steps.length === 0) {
         alert('This lesson is coming soon! 🚧');
         return;
@@ -1839,7 +1923,8 @@ function startCurrentLesson() {
 }
 
 function updateLessonUI() {
-    const lesson = LESSONS[AppState.currentLesson];
+    const lessons = getCurrentLessons();
+    const lesson = lessons[AppState.currentLesson];
     const step = lesson.steps[AppState.currentStep];
     const progress = ((AppState.currentStep + 1) / lesson.steps.length) * 100;
 
@@ -1967,7 +2052,7 @@ function renderCulturalStep(step) {
 
 // ===== MCQ LOGIC =====
 function selectMCQAnswer(index, correctIndex) {
-    if (AppState.selectedAnswer !== null) return;
+    if (document.getElementById(`quiz-opt-${index}`).classList.contains('disabled')) return;
     AppState.selectedAnswer = index;
 
     document.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected'));
@@ -1976,7 +2061,8 @@ function selectMCQAnswer(index, correctIndex) {
 }
 
 function checkMCQAnswer() {
-    const lesson = LESSONS[AppState.currentLesson];
+    const lessons = getCurrentLessons();
+    const lesson = lessons[AppState.currentLesson];
     const step = lesson.steps[AppState.currentStep];
     const isCorrect = AppState.selectedAnswer === step.correct;
 
@@ -2010,6 +2096,7 @@ function checkMCQAnswer() {
 
 // ===== FILL IN THE BLANK LOGIC =====
 function selectFillAnswer(answer, index, correctAnswer) {
+    if (document.getElementById(`fill-opt-${index}`).classList.contains('disabled')) return;
     AppState.selectedAnswer = answer;
     document.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected'));
     document.getElementById(`fill-opt-${index}`).classList.add('selected');
@@ -2054,7 +2141,8 @@ function selectMatchItem(side, index, value, pairIndex) {
     } else {
         if (AppState.matchState.selected && AppState.matchState.selected.side === 'left') {
             // Check if match is correct
-            const lesson = LESSONS[AppState.currentLesson];
+            const lessons = getCurrentLessons();
+            const lesson = lessons[AppState.currentLesson];
             const step = lesson.steps[AppState.currentStep];
             const leftIdx = AppState.matchState.selected.index;
             const leftValue = AppState.matchState.selected.value;
@@ -2119,7 +2207,8 @@ function removeFeedback() {
 
 // ===== LESSON NAVIGATION =====
 function nextStep() {
-    const lesson = LESSONS[AppState.currentLesson];
+    const lessons = getCurrentLessons();
+    const lesson = lessons[AppState.currentLesson];
     AppState.currentStep++;
 
     if (AppState.currentStep >= lesson.steps.length) {
@@ -2130,7 +2219,8 @@ function nextStep() {
 }
 
 function finishLesson() {
-    const lesson = LESSONS[AppState.currentLesson];
+    const lessons = getCurrentLessons();
+    const lesson = lessons[AppState.currentLesson];
     const accuracy = AppState.lessonAnswers.total > 0
         ? Math.round((AppState.lessonAnswers.correct / AppState.lessonAnswers.total) * 100)
         : 100;
@@ -2146,13 +2236,17 @@ function finishLesson() {
         AppState.wordsLearned += lesson.words;
         AppState.lessonsCompleted++;
 
-        // Unlock next lesson
-        if (AppState.currentLesson < LESSONS.length - 1) {
-            AppState.currentLesson++;
+        // Advance level progress
+        const currentProgress = getCurrentLessonProgress();
+        if (AppState.currentLesson >= currentProgress) {
+            setCurrentLessonProgress(AppState.currentLesson + 1);
+        }
+
+        // Check if level completed — auto-switch to next level
+        if (getCurrentLessonProgress() >= lessons.length && AppState.currentLevel < LEVELS.length - 1) {
+            AppState.currentLevel++;
         }
     } else {
-        // Restore the actual current lesson pointer
-        AppState.currentLesson = AppState._replayingLesson;
         delete AppState._replayingLesson;
     }
 
@@ -2241,6 +2335,7 @@ function updateProfile() {
     document.getElementById('profile-xp').textContent = AppState.xp;
     document.getElementById('profile-words').textContent = AppState.wordsLearned;
     document.getElementById('profile-lessons').textContent = AppState.lessonsCompleted;
+    updateProfileLevel();
 
     // Badges
     const badgesGrid = document.getElementById('badges-grid');
@@ -2303,10 +2398,12 @@ function saveState() {
         localStorage.setItem('bola_state', JSON.stringify({
             xp: AppState.xp,
             streak: AppState.streak,
+            currentLevel: AppState.currentLevel,
             currentLesson: AppState.currentLesson,
             wordsLearned: AppState.wordsLearned,
             lessonsCompleted: AppState.lessonsCompleted,
             dailyXP: AppState.dailyXP,
+            levelProgress: AppState.levelProgress,
             badges: BADGES.map(b => b.earned),
             weeklyActivity: AppState.weeklyActivity,
             lastSaved: new Date().toISOString()
@@ -2323,10 +2420,14 @@ function loadState() {
             const data = JSON.parse(saved);
             AppState.xp = data.xp || 0;
             AppState.streak = data.streak || 1;
+            AppState.currentLevel = data.currentLevel || 0;
             AppState.currentLesson = data.currentLesson || 0;
             AppState.wordsLearned = data.wordsLearned || 0;
             AppState.lessonsCompleted = data.lessonsCompleted || 0;
             AppState.dailyXP = data.dailyXP || 0;
+            if (data.levelProgress) {
+                AppState.levelProgress = data.levelProgress;
+            }
             if (data.badges) {
                 data.badges.forEach((earned, i) => {
                     if (BADGES[i]) BADGES[i].earned = earned;
@@ -2341,27 +2442,23 @@ function loadState() {
     }
 }
 
-// ===== START CURRENT LESSON SHORTCUT =====
-function startCurrentLesson() {
-    const lesson = LESSONS[AppState.currentLesson];
-    if (!lesson || lesson.steps.length === 0) {
-        alert('This lesson is coming soon! More content being added. 🚧');
-        return;
+// ===== PROFILE UPDATE =====
+function updateProfileLevel() {
+    const el = document.getElementById('profile-level-label');
+    if (el) {
+        const level = LEVELS[AppState.currentLevel];
+        el.textContent = `Level ${level.id + 1} \u2022 ${level.badge}`;
     }
-
-    AppState.currentStep = 0;
-    AppState.hearts = 5;
-    AppState.lessonAnswers = { correct: 0, total: 0 };
-    AppState.selectedAnswer = null;
-    AppState.matchState = { selected: null, matched: [] };
-
-    showScreen('lesson');
-    updateLessonUI();
 }
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
     loadState();
+
+    // Migrate old save: if levelProgress[0] is 0 but currentLesson > 0
+    if (AppState.levelProgress[0] === 0 && AppState.lessonsCompleted > 0) {
+        AppState.levelProgress[0] = Math.min(AppState.lessonsCompleted, LESSONS.length);
+    }
 
     // If user has progress, skip splash screen
     if (AppState.lessonsCompleted > 0) {
